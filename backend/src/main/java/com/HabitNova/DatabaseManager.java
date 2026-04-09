@@ -1,15 +1,11 @@
-package sa.edu.kau.fcit.cpit252.project;
-
-import java.util.HashMap;
-import java.util.Map;
+package com.HabitNova;
 
 public class DatabaseManager {
     private static DatabaseManager instance;
-        private Map<String, String> usersDb;
-
+    private Map<String, String> usersDb;
 
     private DatabaseManager() {
-         usersDb = new HashMap<>();
+        usersDb = new HashMap<>();
         System.out.println("System: Initializing the Single Database Instance...");
     }
 
@@ -19,12 +15,12 @@ public class DatabaseManager {
         }
         return instance;
     }
-    
-      public boolean registerUser(String username, String password) {
-        if (usersDb.containsKey(username)) {
-            return false;
+
+    public boolean registerUser(String username, String password) {
+        if (userDb.containsKey(username)) {
+            return false; // User already exists
         }
-        usersDb.put(username, password);
+        userDb.put(username, password);
         return true;
     }
 }
