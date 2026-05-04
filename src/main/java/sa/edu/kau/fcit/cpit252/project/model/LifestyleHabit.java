@@ -1,9 +1,8 @@
-package com.habitnova.model;
+package sa.edu.kau.fcit.cpit252.project.model;
 
 import java.time.LocalDate;
 
 public class LifestyleHabit extends Habit {
-
     private String timeOfDay;
 
     public LifestyleHabit(String id, String name, String description) {
@@ -35,6 +34,10 @@ public class LifestyleHabit extends Habit {
         }
     }
 
-    public String getTimeOfDay() { return timeOfDay; }
-    public void setTimeOfDay(String timeOfDay) { this.timeOfDay = timeOfDay; }
+    public String getTimeOfDay() {
+        return timeOfDay;
+    }
+    public void setTimeOfDay(String timeOfDay) {
+        this.timeOfDay = timeOfDay;
+    }
 }

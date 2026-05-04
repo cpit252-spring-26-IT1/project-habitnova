@@ -1,12 +1,14 @@
-package com.habitnova.factory;
+package sa.edu.kau.fcit.cpit252.project.factory;
 
-import com.habitnova.model.Habit;
-import com.habitnova.model.HealthHabit;
-import com.habitnova.model.LifestyleHabit;
-import com.habitnova.model.StudyHabit;
+import sa.edu.kau.fcit.cpit252.project.model.Habit;
+import sa.edu.kau.fcit.cpit252.project.model.HealthHabit;
+import sa.edu.kau.fcit.cpit252.project.model.LifestyleHabit;
+import sa.edu.kau.fcit.cpit252.project.model.StudyHabit;
+
 
 public class HabitFactory {
     private static int idCounter = 0;
+
     public static Habit createHabit(String category, String name, String description) {
         String id = generateId();
 
@@ -19,14 +21,13 @@ public class HabitFactory {
                 return new LifestyleHabit(id, name, description);
             default:
                 throw new IllegalArgumentException(
-                    "Unknown habit category: " + category +
-                    ". Valid categories: health, study, lifestyle"
+                        "Unknown habit category: " + category +
+                                ". Valid categories: health, study, lifestyle"
                 );
         }
     }
 
-    public static Habit createHabit(String category, String name, String description,
-                                     String extraParam, int extraValue) {
+    public static Habit createHabit(String category, String name, String description, String extraParam, int extraValue) {
         String id = generateId();
 
         switch (category.toLowerCase()) {
@@ -38,7 +39,7 @@ public class HabitFactory {
                 return new LifestyleHabit(id, name, description, extraParam);
             default:
                 throw new IllegalArgumentException(
-                    "Unknown habit category: " + category
+                        "Unknown habit category: " + category
                 );
         }
     }

@@ -1,8 +1,9 @@
-package com.habitnova.decorator;
+package sa.edu.kau.fcit.cpit252.project.decorator;
 
-import com.habitnova.model.Habit;
+import sa.edu.kau.fcit.cpit252.project.model.Habit;
 
-public class PriorityDecorator extends HabitDecorator {
+public class PriorityDecorator extends HabitDecorator{
+
     public enum Priority {
         HIGH("🔴 HIGH"),
         MEDIUM("🟡 MEDIUM"),
@@ -14,10 +15,9 @@ public class PriorityDecorator extends HabitDecorator {
             this.label = label;
         }
 
-        public String getLabel() {
-            return label;
-        }
+        public String getLabel() { return label; }
     }
+
     private Priority priority;
 
     public PriorityDecorator(Habit wrappedHabit, Priority priority) {

@@ -1,4 +1,4 @@
-package com.habitnova.model;
+package sa.edu.kau.fcit.cpit252.project.model;
 
 import java.time.LocalDate;
 
@@ -37,9 +37,17 @@ public class StudyHabit extends Habit {
         }
     }
 
-    public String getSubject() { return subject; }
-    public void setSubject(String subject) { this.subject = subject; }
+    public String getSubject() {
+        return subject;
+    }
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 
-    public int getTargetPages() { return targetPages; }
-    public void setTargetPages(int targetPages) { this.targetPages = targetPages; }
+    public int getTargetPages() {
+        return targetPages;
+    }
+    public void setTargetPages(int targetPages) {
+        this.targetPages = targetPages;
+    }
 }

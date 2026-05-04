@@ -1,18 +1,15 @@
-package com.habitnova.view;
+package sa.edu.kau.fcit.cpit252.project.view;
 
-import com.habitnova.controller.HabitController;
-import com.habitnova.model.Habit;
+import sa.edu.kau.fcit.cpit252.project.controller.HabitController;
+import sa.edu.kau.fcit.cpit252.project.decorator.PriorityDecorator;
+import sa.edu.kau.fcit.cpit252.project.decorator.ReminderDecorator;
+import sa.edu.kau.fcit.cpit252.project.model.Habit;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
-/**
- * View in the MVC architecture.
- * Console-based user interface for interacting with the HabitNova system.
- */
 public class ConsoleView {
-
     private final HabitController controller;
     private final Scanner scanner;
 
@@ -29,9 +26,6 @@ public class ConsoleView {
         this.scanner = new Scanner(System.in);
     }
 
-    /**
-     * Main application loop.
-     */
     public void start() {
         displayWelcome();
         boolean running = true;
@@ -46,8 +40,10 @@ public class ConsoleView {
                 case "3": handleCompleteHabit(); break;
                 case "4": handleEditHabit(); break;
                 case "5": handleDeleteHabit(); break;
-                case "6": handleViewProgress(); break;
-                case "7":
+                case "6": handleSetReminder(); break;
+                case "7": handleSetPriority(); break;
+                case "8": handleViewProgress(); break;
+                case "9":
                     running = false;
                     displayGoodbye();
                     break;
@@ -75,14 +71,24 @@ public class ConsoleView {
         System.out.printf("  Habits: %d  |  Completed Today: %d%n",
                 controller.getTotalHabitCount(),
                 controller.getCompletedTodayCount());
+
+        // Show high-priority alerts
+        List<Habit> urgent = controller.getHighPriorityPending();
+        if (!urgent.isEmpty()) {
+            System.out.println(RED + "  🔴 " + urgent.size()
+                    + " high-priority habit(s) pending!" + RESET);
+        }
+
         System.out.println(BOLD + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" + RESET);
-        System.out.println("  1. " + GREEN + "Add Habit" + RESET);
-        System.out.println("  2. " + CYAN + "View All Habits" + RESET);
+        System.out.println("  1. " + GREEN  + "Add Habit" + RESET);
+        System.out.println("  2. " + CYAN   + "View All Habits" + RESET);
         System.out.println("  3. " + YELLOW + "Complete Habit" + RESET);
         System.out.println("  4. " + PURPLE + "Edit Habit" + RESET);
-        System.out.println("  5. " + RED + "Delete Habit" + RESET);
-        System.out.println("  6. " + CYAN + "View Progress" + RESET);
-        System.out.println("  7. Exit");
+        System.out.println("  5. " + RED    + "Delete Habit" + RESET);
+        System.out.println("  6. " + YELLOW + "Set Reminder" + RESET + "  ⏰");
+        System.out.println("  7. " + YELLOW + "Set Priority" + RESET + "  🔴");
+        System.out.println("  8. " + CYAN   + "View Progress" + RESET);
+        System.out.println("  9. Exit");
         System.out.print("\n  Choose an option: ");
     }
 
@@ -120,10 +126,41 @@ public class ConsoleView {
 
         for (Habit h : habits) {
             String status = h.isCompletedForToday() ? GREEN + "✓" + RESET : "○";
-            System.out.printf("  %s  %-10s %-20s %-30s  Streak: %d%n",
+            String extras = getDecoratorInfo(h);
+            System.out.printf("  %s  %-10s %-20s %-30s  Streak: %d%s%n",
                     status, h.getId(), "[" + h.getCategory() + "] " + h.getName(),
-                    h.getDescription(), h.getCurrentStreak());
+                    h.getDescription(), h.getCurrentStreak(), extras);
         }
+    }
+
+    /**
+     * Builds a string showing decorator info (reminder, priority) if present.
+     */
+    private String getDecoratorInfo(Habit h) {
+        StringBuilder info = new StringBuilder();
+
+        if (h instanceof PriorityDecorator) {
+            info.append("  | ").append(((PriorityDecorator) h).getPriority().getLabel());
+        }
+        if (h instanceof ReminderDecorator) {
+            info.append("  | ⏰ ").append(((ReminderDecorator) h).getReminderTime());
+        }
+
+        // Check inner decorator (stacked decorators)
+        if (h instanceof ReminderDecorator) {
+            Habit directInner = ((ReminderDecorator) h).getDirectWrapped();
+            if (directInner instanceof PriorityDecorator) {
+                info.append("  | ").append(((PriorityDecorator) directInner).getPriority().getLabel());
+            }
+        }
+        if (h instanceof PriorityDecorator) {
+            Habit directInner = ((PriorityDecorator) h).getDirectWrapped();
+            if (directInner instanceof ReminderDecorator) {
+                info.append("  | ⏰ ").append(((ReminderDecorator) directInner).getReminderTime());
+            }
+        }
+
+        return info.toString();
     }
 
     private void handleCompleteHabit() {
@@ -175,6 +212,58 @@ public class ConsoleView {
             System.out.println(RED + "  ✓ Habit deleted." + RESET);
         } else {
             System.out.println(RED + "  ✗ Habit not found with ID: " + id + RESET);
+        }
+    }
+
+    private void handleSetReminder() {
+        List<Habit> habits = controller.getAllHabits();
+        if (habits.isEmpty()) {
+            System.out.println(YELLOW + "  No habits available." + RESET);
+            return;
+        }
+
+        handleViewHabits();
+        System.out.println();
+        System.out.println(YELLOW + BOLD + "  ── Set Reminder (Decorator Pattern) ──" + RESET);
+        System.out.print("  Enter Habit ID: ");
+        String id = scanner.nextLine().trim();
+
+        System.out.print("  Reminder time (HH:MM, e.g., 07:30): ");
+        String time = scanner.nextLine().trim();
+
+        if (controller.addReminder(id, time)) {
+            System.out.println(GREEN + "  ✓ Reminder set for " + time + RESET);
+        } else {
+            System.out.println(RED + "  ✗ Habit not found with ID: " + id + RESET);
+        }
+    }
+
+    private void handleSetPriority() {
+        List<Habit> habits = controller.getAllHabits();
+        if (habits.isEmpty()) {
+            System.out.println(YELLOW + "  No habits available." + RESET);
+            return;
+        }
+
+        handleViewHabits();
+        System.out.println();
+        System.out.println(YELLOW + BOLD + "  ── Set Priority (Decorator Pattern) ──" + RESET);
+        System.out.print("  Enter Habit ID: ");
+        String id = scanner.nextLine().trim();
+
+        System.out.println("  Priority levels: [high] [medium] [low]");
+        System.out.print("  Priority: ");
+        String input = scanner.nextLine().trim().toUpperCase();
+
+        try {
+            PriorityDecorator.Priority priority = PriorityDecorator.Priority.valueOf(input);
+            if (controller.setPriority(id, priority)) {
+                System.out.println(GREEN + "  ✓ Priority set to " + priority.getLabel() + RESET);
+            } else {
+                System.out.println(RED + "  ✗ Habit not found with ID: " + id + RESET);
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(RED + "  ✗ Invalid priority. Use: high, medium, or low" + RESET);
         }
     }
 

@@ -1,11 +1,11 @@
-package com.habitnova.decorator;
+package sa.edu.kau.fcit.cpit252.project.decorator;
 
-import com.habitnova.model.Habit;
+import sa.edu.kau.fcit.cpit252.project.model.Habit;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public abstract class HabitDecorator extends Habit {
+public abstract class HabitDecorator extends Habit{
     protected final Habit wrappedHabit;
 
     public HabitDecorator(Habit wrappedHabit) {
@@ -59,6 +59,9 @@ public abstract class HabitDecorator extends Habit {
         return wrappedHabit.getCreatedDate();
     }
 
+    /**
+     * Returns the original unwrapped habit at the bottom of the decorator chain.
+     */
     public Habit getWrappedHabit() {
         if (wrappedHabit instanceof HabitDecorator) {
             return ((HabitDecorator) wrappedHabit).getWrappedHabit();
@@ -66,6 +69,9 @@ public abstract class HabitDecorator extends Habit {
         return wrappedHabit;
     }
 
+    /**
+     * Returns the directly wrapped habit (one level up).
+     */
     public Habit getDirectWrapped() {
         return wrappedHabit;
     }

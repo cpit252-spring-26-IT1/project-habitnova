@@ -1,7 +1,10 @@
-package com.habitnova.controller;
+package sa.edu.kau.fcit.cpit252.project.controller;
 
-import com.habitnova.factory.HabitFactory;
-import com.habitnova.model.Habit;
+import sa.edu.kau.fcit.cpit252.project.decorator.HabitDecorator;
+import sa.edu.kau.fcit.cpit252.project.decorator.PriorityDecorator;
+import sa.edu.kau.fcit.cpit252.project.decorator.ReminderDecorator;
+import sa.edu.kau.fcit.cpit252.project.factory.HabitFactory;
+import sa.edu.kau.fcit.cpit252.project.model.Habit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +22,30 @@ public class HabitController {
         Habit habit = HabitFactory.createHabit(category, name, description);
         habits.add(habit);
         return habit;
+    }
+
+    public boolean addReminder(String id, String reminderTime) {
+        for (int i = 0; i < habits.size(); i++) {
+            if (habits.get(i).getId().equals(id)) {
+                Habit original = habits.get(i);
+                Habit decorated = new ReminderDecorator(original, reminderTime);
+                habits.set(i, decorated);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean setPriority(String id, PriorityDecorator.Priority priority) {
+        for (int i = 0; i < habits.size(); i++) {
+            if (habits.get(i).getId().equals(id)) {
+                Habit original = habits.get(i);
+                Habit decorated = new PriorityDecorator(original, priority);
+                habits.set(i, decorated);
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean deleteHabit(String id) {
@@ -60,6 +87,13 @@ public class HabitController {
     public List<Habit> getHabitsByCategory(String category) {
         return habits.stream()
                 .filter(h -> h.getCategory().equalsIgnoreCase(category))
+                .collect(Collectors.toList());
+    }
+
+    public List<Habit> getHighPriorityPending() {
+        return habits.stream()
+                .filter(h -> h instanceof PriorityDecorator)
+                .filter(h -> ((PriorityDecorator) h).needsAttention())
                 .collect(Collectors.toList());
     }
 

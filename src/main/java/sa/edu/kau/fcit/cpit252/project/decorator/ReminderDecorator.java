@@ -1,7 +1,8 @@
-package com.habitnova.decorator;
-import com.habitnova.model.Habit;
+package sa.edu.kau.fcit.cpit252.project.decorator;
 
-public class ReminderDecorator extends HabitDecorator {
+import sa.edu.kau.fcit.cpit252.project.model.Habit;
+
+public class ReminderDecorator extends HabitDecorator{
     private String reminderTime;
 
     public ReminderDecorator(Habit wrappedHabit, String reminderTime) {
@@ -15,16 +16,19 @@ public class ReminderDecorator extends HabitDecorator {
         return original + "\n    ⏰ Reminder set for " + reminderTime;
     }
 
+
     @Override
     public String toString() {
         return wrappedHabit.toString() + " | ⏰ Reminder: " + reminderTime;
     }
+
 
     public boolean isReminderDue() {
         java.time.LocalTime now = java.time.LocalTime.now();
         String currentTime = String.format("%02d:%02d", now.getHour(), now.getMinute());
         return currentTime.equals(reminderTime) && !wrappedHabit.isCompletedForToday();
     }
+
 
     public String getReminderNotification() {
         if (!wrappedHabit.isCompletedForToday()) {
@@ -38,7 +42,6 @@ public class ReminderDecorator extends HabitDecorator {
     public String getReminderTime() {
         return reminderTime;
     }
-
     public void setReminderTime(String reminderTime) {
         this.reminderTime = reminderTime;
     }

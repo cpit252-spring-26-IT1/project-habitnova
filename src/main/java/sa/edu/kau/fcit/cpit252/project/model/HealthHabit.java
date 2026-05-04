@@ -1,4 +1,4 @@
-package com.habitnova.model;
+package sa.edu.kau.fcit.cpit252.project.model;
 
 import java.time.LocalDate;
 
@@ -34,6 +34,10 @@ public class HealthHabit extends Habit {
         }
     }
 
-    public int getTargetMinutes() { return targetMinutes; }
-    public void setTargetMinutes(int targetMinutes) { this.targetMinutes = targetMinutes; }
+    public int getTargetMinutes() {
+        return targetMinutes;
+    }
+    public void setTargetMinutes(int targetMinutes) {
+        this.targetMinutes = targetMinutes;
+    }
 }

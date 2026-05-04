@@ -1,4 +1,4 @@
-package com.habitnova.model;
+package sa.edu.kau.fcit.cpit252.project.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,6 +26,7 @@ public abstract class Habit {
     }
 
     public abstract boolean isCompletedForToday();
+
     public abstract String getMotivationalMessage();
 
     public void markCompleted() {
@@ -64,7 +65,6 @@ public abstract class Habit {
             currentStreak++;
             date = date.minusDays(1);
         }
-        
     }
 
     public double getCompletionRate() {
@@ -74,26 +74,48 @@ public abstract class Habit {
         return (completionDates.size() * 100.0) / totalDays;
     }
 
-    // ── Getters & Setters ──
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
 
-    public LocalDate getCreatedDate() { return createdDate; }
+    public List<LocalDate> getCompletionDates() {
+        return new ArrayList<>(completionDates);
+    }
 
-    public List<LocalDate> getCompletionDates() { return new ArrayList<>(completionDates); }
-
-    public int getCurrentStreak() { return currentStreak; }
-    public int getBestStreak() { return bestStreak; }
+    public int getCurrentStreak() {
+        return currentStreak;
+    }
+    public int getBestStreak() {
+        return bestStreak;
+    }
 
     @Override
     public String toString() {
