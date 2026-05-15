@@ -1,10 +1,17 @@
 package sa.edu.kau.fcit.cpit252.project.model;
 
+import sa.edu.kau.fcit.cpit252.project.observer.HabitEvent;
+import sa.edu.kau.fcit.cpit252.project.observer.HabitObserver;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public abstract class Habit {
+
+    private static final int[] MILESTONES = {7, 30, 100};
+
     private String id;
     private String name;
     private String description;
@@ -13,6 +20,9 @@ public abstract class Habit {
     private List<LocalDate> completionDates;
     private int currentStreak;
     private int bestStreak;
+
+
+    private final transient List<HabitObserver> observers = new ArrayList<>();
 
     public Habit(String id, String name, String description, String category) {
         this.id = id;
@@ -29,19 +39,70 @@ public abstract class Habit {
 
     public abstract String getMotivationalMessage();
 
+
+
+
+    public void addObserver(HabitObserver observer) {
+        if (observer != null && !observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+
+    public void removeObserver(HabitObserver observer) {
+        observers.remove(observer);
+    }
+
+
+    public int getObserverCount() {
+        return observers.size();
+    }
+
+
+    protected void notifyObservers(HabitEvent event) {
+        for (HabitObserver observer : new ArrayList<>(observers)) {
+            observer.update(this, event);
+        }
+    }
+
+
+
     public void markCompleted() {
         LocalDate today = LocalDate.now();
         if (!completionDates.contains(today)) {
+            int previousStreak = currentStreak;
             completionDates.add(today);
             updateStreak();
+
+            notifyObservers(HabitEvent.COMPLETED);
+
+
+            for (int milestone : MILESTONES) {
+                if (currentStreak >= milestone && previousStreak < milestone) {
+                    notifyObservers(HabitEvent.MILESTONE_REACHED);
+                    break;
+                }
+            }
         }
     }
 
     public void unmarkCompleted() {
         LocalDate today = LocalDate.now();
-        completionDates.remove(today);
-        recalculateStreak();
+        if (completionDates.contains(today)) {
+            int previousStreak = currentStreak;
+            completionDates.remove(today);
+            recalculateStreak();
+
+            notifyObservers(HabitEvent.UNCOMPLETED);
+
+
+            if (previousStreak > 0 && currentStreak == 0) {
+                notifyObservers(HabitEvent.STREAK_BROKEN);
+            }
+        }
     }
+
+
 
     private void updateStreak() {
         LocalDate today = LocalDate.now();
@@ -73,6 +134,8 @@ public abstract class Habit {
         if (totalDays <= 0) return 0.0;
         return (completionDates.size() * 100.0) / totalDays;
     }
+
+
 
     public String getId() {
         return id;

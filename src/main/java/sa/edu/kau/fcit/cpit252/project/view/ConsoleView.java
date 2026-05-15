@@ -43,7 +43,8 @@ public class ConsoleView {
                 case "6": handleSetReminder(); break;
                 case "7": handleSetPriority(); break;
                 case "8": handleViewProgress(); break;
-                case "9":
+                case "9": handleViewActivityLog(); break;
+                case "10":
                     running = false;
                     displayGoodbye();
                     break;
@@ -88,7 +89,8 @@ public class ConsoleView {
         System.out.println("  6. " + YELLOW + "Set Reminder" + RESET + "  ⏰");
         System.out.println("  7. " + YELLOW + "Set Priority" + RESET + "  🔴");
         System.out.println("  8. " + CYAN   + "View Progress" + RESET);
-        System.out.println("  9. Exit");
+        System.out.println("  9. " + PURPLE + "View Activity Log" + RESET + "  📋");
+        System.out.println(" 10. Exit");
         System.out.print("\n  Choose an option: ");
     }
 
@@ -133,9 +135,7 @@ public class ConsoleView {
         }
     }
 
-    /**
-     * Builds a string showing decorator info (reminder, priority) if present.
-     */
+
     private String getDecoratorInfo(Habit h) {
         StringBuilder info = new StringBuilder();
 
@@ -146,7 +146,6 @@ public class ConsoleView {
             info.append("  | ⏰ ").append(((ReminderDecorator) h).getReminderTime());
         }
 
-        // Check inner decorator (stacked decorators)
         if (h instanceof ReminderDecorator) {
             Habit directInner = ((ReminderDecorator) h).getDirectWrapped();
             if (directInner instanceof PriorityDecorator) {
@@ -296,6 +295,32 @@ public class ConsoleView {
         int empty = 20 - filled;
         return GREEN + "█".repeat(Math.max(0, filled)) + RESET
                 + "░".repeat(Math.max(0, empty));
+    }
+
+    private void handleViewActivityLog() {
+        System.out.println();
+        System.out.println(PURPLE + BOLD + "  ── Activity Log (Observer Pattern) ──" + RESET);
+        System.out.println("  Events captured by the CompletionLogObserver:");
+        System.out.println();
+
+        var log = controller.getCompletionLogObserver().getLog();
+
+        if (log.isEmpty()) {
+            System.out.println(YELLOW + "  No activity recorded yet. Complete a habit to see events." + RESET);
+            return;
+        }
+
+        var recent = controller.getCompletionLogObserver().getRecent(20);
+        for (String entry : recent) {
+            if (entry.contains("COMPLETED ")) {
+                System.out.println(GREEN + "  " + entry + RESET);
+            } else {
+                System.out.println(YELLOW + "  " + entry + RESET);
+            }
+        }
+
+        System.out.println();
+        System.out.printf(CYAN + "  Total events logged: %d%n" + RESET, log.size());
     }
 
     private void displayGoodbye() {

@@ -1,27 +1,66 @@
 package sa.edu.kau.fcit.cpit252.project.controller;
 
-import sa.edu.kau.fcit.cpit252.project.decorator.HabitDecorator;
 import sa.edu.kau.fcit.cpit252.project.decorator.PriorityDecorator;
 import sa.edu.kau.fcit.cpit252.project.decorator.ReminderDecorator;
 import sa.edu.kau.fcit.cpit252.project.factory.HabitFactory;
 import sa.edu.kau.fcit.cpit252.project.model.Habit;
+import sa.edu.kau.fcit.cpit252.project.observer.CompletionLogObserver;
+import sa.edu.kau.fcit.cpit252.project.observer.HabitObserver;
+import sa.edu.kau.fcit.cpit252.project.observer.MilestoneObserver;
+import sa.edu.kau.fcit.cpit252.project.observer.StreakBreakObserver;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 public class HabitController {
+
     private final List<Habit> habits;
+
+
+    private final MilestoneObserver milestoneObserver;
+    private final StreakBreakObserver streakBreakObserver;
+    private final CompletionLogObserver completionLogObserver;
 
     public HabitController() {
         this.habits = new ArrayList<>();
+        this.milestoneObserver = new MilestoneObserver();
+        this.streakBreakObserver = new StreakBreakObserver();
+        this.completionLogObserver = new CompletionLogObserver();
     }
+
+
+    public HabitController(MilestoneObserver milestone,
+                           StreakBreakObserver streakBreak,
+                           CompletionLogObserver log) {
+        this.habits = new ArrayList<>();
+        this.milestoneObserver = milestone;
+        this.streakBreakObserver = streakBreak;
+        this.completionLogObserver = log;
+    }
+
 
     public Habit addHabit(String category, String name, String description) {
         Habit habit = HabitFactory.createHabit(category, name, description);
+        attachObservers(habit);
         habits.add(habit);
         return habit;
+    }
+
+
+    private void attachObservers(Habit habit) {
+        habit.addObserver(milestoneObserver);
+        habit.addObserver(streakBreakObserver);
+        habit.addObserver(completionLogObserver);
+    }
+
+
+    public void registerObserverForAllHabits(HabitObserver observer) {
+        for (Habit h : habits) {
+            h.addObserver(observer);
+        }
     }
 
     public boolean addReminder(String id, String reminderTime) {
@@ -119,5 +158,19 @@ public class HabitController {
                 .mapToDouble(Habit::getCompletionRate)
                 .average()
                 .orElse(0.0);
+    }
+
+
+
+    public CompletionLogObserver getCompletionLogObserver() {
+        return completionLogObserver;
+    }
+
+    public MilestoneObserver getMilestoneObserver() {
+        return milestoneObserver;
+    }
+
+    public StreakBreakObserver getStreakBreakObserver() {
+        return streakBreakObserver;
     }
 }
