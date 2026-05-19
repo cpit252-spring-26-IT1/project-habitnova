@@ -62,8 +62,6 @@ public abstract class HabitDecorator extends Habit {
         return wrappedHabit.getCreatedDate();
     }
 
-
-
     @Override
     public void addObserver(HabitObserver observer) {
         wrappedHabit.addObserver(observer);
@@ -79,14 +77,12 @@ public abstract class HabitDecorator extends Habit {
         return wrappedHabit.getObserverCount();
     }
 
-
     public Habit getWrappedHabit() {
         if (wrappedHabit instanceof HabitDecorator) {
             return ((HabitDecorator) wrappedHabit).getWrappedHabit();
         }
         return wrappedHabit;
     }
-
 
     public Habit getDirectWrapped() {
         return wrappedHabit;

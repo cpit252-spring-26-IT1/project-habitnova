@@ -15,7 +15,9 @@ public class PriorityDecorator extends HabitDecorator{
             this.label = label;
         }
 
-        public String getLabel() { return label; }
+        public String getLabel() {
+            return label;
+        }
     }
 
     private Priority priority;

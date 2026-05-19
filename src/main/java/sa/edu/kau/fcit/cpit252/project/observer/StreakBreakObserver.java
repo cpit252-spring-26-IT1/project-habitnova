@@ -5,7 +5,6 @@ import sa.edu.kau.fcit.cpit252.project.model.Habit;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class StreakBreakObserver implements HabitObserver {
 
     private static final String RED    = "\033[31m";
@@ -29,7 +28,6 @@ public class StreakBreakObserver implements HabitObserver {
         System.out.println("    Your best ever was " + habit.getBestStreak()
                 + " days. You've got this!" + RESET);
     }
-
 
     public int getBreakCount(String habitId) {
         return breakCounts.getOrDefault(habitId, 0);

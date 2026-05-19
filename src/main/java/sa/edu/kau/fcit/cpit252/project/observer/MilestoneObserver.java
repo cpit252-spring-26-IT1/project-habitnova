@@ -5,14 +5,12 @@ import sa.edu.kau.fcit.cpit252.project.model.Habit;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MilestoneObserver implements HabitObserver {
 
     private static final String GREEN  = "\033[32m";
     private static final String YELLOW = "\033[33m";
     private static final String BOLD   = "\033[1m";
     private static final String RESET  = "\033[0m";
-
 
     private final List<String> celebratedMilestones = new ArrayList<>();
 
@@ -56,7 +54,6 @@ public class MilestoneObserver implements HabitObserver {
                 BOLD, YELLOW, habitName, streak, RESET,
                 BOLD, YELLOW, RESET);
     }
-
 
     public List<String> getCelebratedMilestones() {
         return new ArrayList<>(celebratedMilestones);

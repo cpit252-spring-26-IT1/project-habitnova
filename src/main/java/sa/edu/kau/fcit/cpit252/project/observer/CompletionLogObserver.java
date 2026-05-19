@@ -7,7 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class CompletionLogObserver implements HabitObserver {
 
     private static final DateTimeFormatter FORMATTER =
@@ -30,11 +29,9 @@ public class CompletionLogObserver implements HabitObserver {
         logEntries.add(entry);
     }
 
-
     public List<String> getLog() {
         return new ArrayList<>(logEntries);
     }
-
 
     public List<String> getRecent(int n) {
         int size = logEntries.size();
@@ -42,11 +39,9 @@ public class CompletionLogObserver implements HabitObserver {
         return new ArrayList<>(logEntries.subList(from, size));
     }
 
-
     public int size() {
         return logEntries.size();
     }
-
 
     public void clear() {
         logEntries.clear();

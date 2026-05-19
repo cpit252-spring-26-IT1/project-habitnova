@@ -1,11 +1,11 @@
-package sa.edu.kau.fcit.cpit252.project.controller;
+package sa.edu.kau.fcit.cpit252.project.service;
 
+import org.springframework.stereotype.Service;
 import sa.edu.kau.fcit.cpit252.project.decorator.PriorityDecorator;
 import sa.edu.kau.fcit.cpit252.project.decorator.ReminderDecorator;
 import sa.edu.kau.fcit.cpit252.project.factory.HabitFactory;
 import sa.edu.kau.fcit.cpit252.project.model.Habit;
 import sa.edu.kau.fcit.cpit252.project.observer.CompletionLogObserver;
-import sa.edu.kau.fcit.cpit252.project.observer.HabitObserver;
 import sa.edu.kau.fcit.cpit252.project.observer.MilestoneObserver;
 import sa.edu.kau.fcit.cpit252.project.observer.StreakBreakObserver;
 
@@ -14,32 +14,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
+public class HabitService {
 
-public class HabitController {
+    private final List<Habit> habits = new ArrayList<>();
 
-    private final List<Habit> habits;
-
-
-    private final MilestoneObserver milestoneObserver;
-    private final StreakBreakObserver streakBreakObserver;
-    private final CompletionLogObserver completionLogObserver;
-
-    public HabitController() {
-        this.habits = new ArrayList<>();
-        this.milestoneObserver = new MilestoneObserver();
-        this.streakBreakObserver = new StreakBreakObserver();
-        this.completionLogObserver = new CompletionLogObserver();
-    }
-
-
-    public HabitController(MilestoneObserver milestone,
-                           StreakBreakObserver streakBreak,
-                           CompletionLogObserver log) {
-        this.habits = new ArrayList<>();
-        this.milestoneObserver = milestone;
-        this.streakBreakObserver = streakBreak;
-        this.completionLogObserver = log;
-    }
+    private final MilestoneObserver milestoneObserver = new MilestoneObserver();
+    private final StreakBreakObserver streakBreakObserver = new StreakBreakObserver();
+    private final CompletionLogObserver completionLogObserver = new CompletionLogObserver();
 
 
     public Habit addHabit(String category, String name, String description) {
@@ -49,26 +31,16 @@ public class HabitController {
         return habit;
     }
 
-
     private void attachObservers(Habit habit) {
         habit.addObserver(milestoneObserver);
         habit.addObserver(streakBreakObserver);
         habit.addObserver(completionLogObserver);
     }
 
-
-    public void registerObserverForAllHabits(HabitObserver observer) {
-        for (Habit h : habits) {
-            h.addObserver(observer);
-        }
-    }
-
     public boolean addReminder(String id, String reminderTime) {
         for (int i = 0; i < habits.size(); i++) {
             if (habits.get(i).getId().equals(id)) {
-                Habit original = habits.get(i);
-                Habit decorated = new ReminderDecorator(original, reminderTime);
-                habits.set(i, decorated);
+                habits.set(i, new ReminderDecorator(habits.get(i), reminderTime));
                 return true;
             }
         }
@@ -78,9 +50,7 @@ public class HabitController {
     public boolean setPriority(String id, PriorityDecorator.Priority priority) {
         for (int i = 0; i < habits.size(); i++) {
             if (habits.get(i).getId().equals(id)) {
-                Habit original = habits.get(i);
-                Habit decorated = new PriorityDecorator(original, priority);
-                habits.set(i, decorated);
+                habits.set(i, new PriorityDecorator(habits.get(i), priority));
                 return true;
             }
         }
@@ -92,31 +62,25 @@ public class HabitController {
     }
 
     public boolean editHabit(String id, String newName, String newDescription) {
-        Optional<Habit> found = findById(id);
-        if (found.isPresent()) {
-            found.get().setName(newName);
-            found.get().setDescription(newDescription);
+        return findById(id).map(h -> {
+            h.setName(newName);
+            h.setDescription(newDescription);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     public boolean completeHabit(String id) {
-        Optional<Habit> found = findById(id);
-        if (found.isPresent()) {
-            found.get().markCompleted();
+        return findById(id).map(h -> {
+            h.markCompleted();
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     public boolean uncompleteHabit(String id) {
-        Optional<Habit> found = findById(id);
-        if (found.isPresent()) {
-            found.get().unmarkCompleted();
+        return findById(id).map(h -> {
+            h.unmarkCompleted();
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     public List<Habit> getAllHabits() {
@@ -129,13 +93,6 @@ public class HabitController {
                 .collect(Collectors.toList());
     }
 
-    public List<Habit> getHighPriorityPending() {
-        return habits.stream()
-                .filter(h -> h instanceof PriorityDecorator)
-                .filter(h -> ((PriorityDecorator) h).needsAttention())
-                .collect(Collectors.toList());
-    }
-
     public Optional<Habit> findById(String id) {
         return habits.stream()
                 .filter(h -> h.getId().equals(id))
@@ -143,9 +100,7 @@ public class HabitController {
     }
 
     public long getCompletedTodayCount() {
-        return habits.stream()
-                .filter(Habit::isCompletedForToday)
-                .count();
+        return habits.stream().filter(Habit::isCompletedForToday).count();
     }
 
     public int getTotalHabitCount() {
@@ -160,7 +115,12 @@ public class HabitController {
                 .orElse(0.0);
     }
 
-
+    public List<Habit> getHighPriorityPending() {
+        return habits.stream()
+                .filter(h -> h instanceof PriorityDecorator
+                        && ((PriorityDecorator) h).needsAttention())
+                .collect(Collectors.toList());
+    }
 
     public CompletionLogObserver getCompletionLogObserver() {
         return completionLogObserver;
