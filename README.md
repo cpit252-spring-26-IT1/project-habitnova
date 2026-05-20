@@ -1,84 +1,166 @@
-# HabitNova: Smart Habit Tracker
+<div align="center">
 
+# ✦ HabitNova
 
-## Description
-A console-based application designed to help students build and maintain consistent daily habits.
-Most existing trackers are either too simple (plain checklists) or too complex (full productivity suites). HabitNova
-sits in the middle — a focused, intelligent habit tracker that lets users define personal habits across categories,
-track daily completion, monitor streaks and progress, and receive motivational feedback that encourages consistency.
+**A smart habit tracker that helps you build consistency — powered by design patterns.**
+
+![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen?style=flat-square&logo=springboot)
+![H2](https://img.shields.io/badge/Database-H2-blue?style=flat-square)
+![Thymeleaf](https://img.shields.io/badge/Template-Thymeleaf-005F0F?style=flat-square)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker)
+![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square)
+
+</div>
+
+---
+
+## What is HabitNova?
+
+Most habit trackers are either too basic (plain checklists) or too complex (full productivity suites). HabitNova sits in the middle — a focused, intelligent tracker that lets you define habits across categories, track daily completion, monitor streaks and progress, and receive motivational feedback that adapts to your consistency.
+
+Built as a CPIT-252 Software Design Patterns project, HabitNova demonstrates three GoF patterns working together in a real application: **Factory Method**, **Decorator**, and **Observer**.
+
+---
 
 ## Features
 
-### ✅ Implemented Features (Completed)
-* **Project & Repository Setup:** Core project structure initialized with Maven build configuration, package layout (`model`, `view`, `controller`, `factory`, `decorator`), and GitHub repository.
-* **Core Architecture (MVC):** Clean separation of concerns with `Habit` model classes, `HabitController` orchestration layer, and `ConsoleView` for user interaction.
-* **Factory Method Design Pattern (Creational):** `HabitFactory` centralizes the creation of `HealthHabit`, `StudyHabit`, and `LifestyleHabit` subclasses, decoupling client code from concrete classes and supporting easy extension to new categories.
-* **Decorator Design Pattern (Structural):** `ReminderDecorator` and `PriorityDecorator` dynamically add reminder times and priority levels to any habit at runtime — stackable on a single habit without subclass explosion.
-* **Streak Engine:** Tracks current streak and all-time best streak per habit, with proper recalculation when completions are undone.
-* **Interactive Console UI:** ANSI-colored menu system with progress dashboard, visual progress bars, high-priority alerts, and context-aware motivational messages.
-* **Comprehensive Test Suite:** 47 unit tests covering Factory Method, Decorator behavior, stacked decorators, and core controller operations — all passing.
+- 🏗 Create habits across three categories — Health, Study, Lifestyle
+- 🔥 Streak engine tracks current and all-time best streaks per habit
+- ⏰ Add reminders to any habit at runtime (Decorator pattern)
+- 🔴 Set priority levels (HIGH / MEDIUM / LOW) on any habit (Decorator pattern)
+- 🔔 Milestone celebrations at 7, 30, and 100 day streaks (Observer pattern)
+- ⚠️ Streak-break warnings with recovery encouragement (Observer pattern)
+- 📋 Activity log captures all completion events in real time (Observer pattern)
+- 💾 Data persists across restarts via H2 embedded database
+- 🌐 Web dashboard with dark theme UI — works from any browser
+- 🖥 Console mode also available for terminal usage
+- 🐳 Dockerized — one command to build and run
 
-### ⏳ Planned Features (Backlog)
-* **Behavioral Pattern (Observer):** Implement Observer pattern for streak alerts and milestone notifications (Stage 3).
-* **Data Persistence:** Save habits and decorator state to a local JSON file so habits survive between application runs.
-* **Habit History View:** Display the last 7 days per habit as a completion grid to help users identify patterns.
-* **Weekly Progress Export (CSV):** Export habit performance summaries for external tracking or sharing with accountability partners.
-* **Additional Habit Categories:** Extend beyond Health/Study/Lifestyle to include Finance, Social, and Creative categories.
-* **Strategy Pattern for Streak Rules:** Allow users to choose strict, flexible, or weekday-only streak calculation modes.
-* **Graphical Frontend:** Replace the console view with a JavaFX or web-based UI/UX layer.
+---
 
-### 🛑 Deferred Features (Won't Implement / Future)
-* **Cloud Sync & Multi-Device Support:** Cross-device synchronization has been deferred. The current scope focuses on a single-user local application; cloud features fall outside the design-patterns curriculum and will be revisited in a future release.
-* **Push Notifications:** Real-time OS-level reminder notifications are deferred. Reminders are currently displayed in-app only, since native notification systems are platform-specific and outside the scope of this stage.
+## Tech Stack
 
-## 🛠️ Prerequisites
-To run this project, you must have the following installed:
-* **Java 17 or 21** (JDK)
-* **Apache Maven**
+| Layer | Technology |
+|---|---|
+| Language | Java 17 |
+| Framework | Spring Boot 3.3.5 |
+| Template Engine | Thymeleaf |
+| Database | H2 (embedded, file-based) |
+| ORM | Hibernate / Spring Data JPA |
+| Frontend | HTML + CSS (dark theme) + Vanilla JS |
+| Build Tool | Maven |
+| Containerization | Docker + Docker Compose |
+| Testing | JUnit 5 + Spring MockMvc + JaCoCo |
 
-## Usage
+---
 
-To build and run the app, use:
+## Getting Started
 
-- **Option 1: Run directly via Maven**
-  - Open the terminal and run the following command:
-```bash
-mvn clean compile exec:java -Dexec.mainClass="com.habitnova.HabitNovaApp"
-```
+### Requirements
 
-- **Option 2: Build and run the executable JAR**
-  - Open the terminal and run the following command:
-```bash
-mvn clean package
-```
+- Java 17 or higher
+- Maven 3.6 or higher
+
+### Run the project
 
 ```bash
-cd target
-java -jar course-project-1.0-SNAPSHOT.jar
+# 1. Clone the repository
+git clone https://github.com/cpit252-spring-26-IT1/project-habitnova
+cd project-habitnova
+
+# 2. Build the project
+mvn clean install
+
+# 3. Run it
+mvn spring-boot:run
 ```
 
-- **Option 3: Run the test suite**
+Then open your browser and go to:
+
+```
+http://localhost:8080
+```
+
+### Run with Docker
+
+```bash
+docker compose up --build
+```
+
+The app starts at `http://localhost:8080`. Habit data is stored in a named Docker volume and survives container restarts.
+
+### Run the test suite
+
 ```bash
 mvn test
 ```
 
-## Design Patterns
+Coverage report is generated at `target/site/jacoco/index.html`.
 
-| Stage | Type | Pattern | Status |
-|:------|:-----|:--------|:------:|
-| Stage 1 | Creational | Factory Method | ✅ |
-| Stage 2 | Structural | Decorator | ✅ |
-| Stage 3 | Behavioral | Observer | 🔜 |
+---
+
+## Project Structure
+
+```
+project-habitnova/
+├── src/main/java/sa/edu/kau/fcit/cpit252/project/
+│   ├── model/            # Habit class hierarchy (abstract Habit + 3 subclasses)
+│   ├── factory/          # Factory Method pattern — HabitFactory
+│   ├── decorator/        # Decorator pattern — Reminder & Priority wrappers
+│   ├── observer/         # Observer pattern — Milestone, StreakBreak, CompletionLog
+│   ├── entity/           # JPA entity for H2 database persistence
+│   ├── repository/       # Spring Data JPA repository
+│   ├── service/          # Business logic — orchestrates all patterns + DB
+│   ├── controller/       # Web controller (Thymeleaf) + REST API controller
+│   ├── dto/              # Request DTOs with Bean Validation
+│   └── view/             # Console UI (legacy terminal mode)
+├── src/main/resources/
+│   ├── templates/        # Thymeleaf HTML dashboard
+│   ├── static/           # CSS + JavaScript
+│   └── application.properties
+├── src/test/             # JUnit 5 test suite + JaCoCo coverage
+├── Dockerfile            # Multi-stage Docker build
+├── docker-compose.yml    # One-command container orchestration
+└── pom.xml
+```
+
+---
+
+## Design Patterns Used
+
+| Stage | Category | Pattern | Description |
+|:------|:---------|:--------|:------------|
+| Stage 1 | Creational | **Factory Method** | `HabitFactory` creates `HealthHabit`, `StudyHabit`, or `LifestyleHabit` based on a category string — the caller never touches concrete classes |
+| Stage 2 | Structural | **Decorator** | `ReminderDecorator` and `PriorityDecorator` wrap any habit to add reminder times or priority levels at runtime — stackable without subclass explosion |
+| Stage 3 | Behavioral | **Observer** | `Habit` acts as the Subject; `MilestoneObserver`, `StreakBreakObserver`, and `CompletionLogObserver` react to completion events independently |
+
+---
 
 ## Screenshots
+
 ![HabitNova Main Menu](assets/ui-screenshot.png)
 ![HabitNova Progress Dashboard](assets/ui-screenshot2.png)
 
+---
+
 ## Team
+
 | Name | Student ID |
 |:-----|:----------:|
 | Fahad Alshehri | 2338900 |
 | Alwaleed Alrefaei | 2345441 |
 
+**Course:** CPIT-252 Software Design Patterns — King Abdulaziz University
+
+---
+
 ## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+MIT — free to use, modify, and share. See the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+  Made by <b>Fahad & Alwaleed</b> at King Abdulaziz University
+</div>
