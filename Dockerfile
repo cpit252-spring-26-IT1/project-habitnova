@@ -12,8 +12,12 @@ RUN groupadd -r habitnova && useradd -r -g habitnova habitnova
 
 COPY --from=build /app/target/course-project-1.0-SNAPSHOT.jar app.jar
 
-RUN chown -R habitnova:habitnova /app
+# Create data directory for H2 database persistence
+RUN mkdir -p /app/data && chown -R habitnova:habitnova /app
 USER habitnova
+
+# Mount point for database persistence across container restarts
+VOLUME /app/data
 
 EXPOSE 8080
 

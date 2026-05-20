@@ -151,6 +151,10 @@ public abstract class Habit {
         return createdDate;
     }
 
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public List<LocalDate> getCompletionDates() {
         return new ArrayList<>(completionDates);
     }
@@ -160,6 +164,16 @@ public abstract class Habit {
     }
     public int getBestStreak() {
         return bestStreak;
+    }
+
+    public void restoreState(List<LocalDate> storedDates, int storedBestStreak, LocalDate storedCreatedDate) {
+        this.completionDates = new ArrayList<>(storedDates);
+        this.createdDate = storedCreatedDate;
+        this.bestStreak = storedBestStreak;
+        recalculateStreak();
+        if (currentStreak > bestStreak) {
+            bestStreak = currentStreak;
+        }
     }
 
     @Override

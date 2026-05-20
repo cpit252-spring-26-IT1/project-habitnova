@@ -9,6 +9,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - JAVA_OPTS=-Xmx256m
+    volumes:
+      - habitnova-data:/app/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/"]
@@ -16,3 +18,6 @@ services:
       timeout: 3s
       start_period: 15s
       retries: 3
+
+volumes:
+  habitnova-data:
