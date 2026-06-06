@@ -160,10 +160,10 @@ project-habitnova/
 
 This project used generative AI tools in accordance with the CPIT-252 course policy on acceptable use. All AI-assisted work is cited below per the syllabus requirements.
 
-| Tool | Prompt / Usage |
-|:-----|:---------------|
-| Claude, Anthropic | Improve the test coverage and increase it to more than 95%. |
-| Claude, Anthropic | Create the UI for the project. |
+| Tool | Date       | Prompt / Usage |
+|:-----|:-----------|:---------------|
+| Claude, Anthropic | 19/05/2026 | Improve the test coverage and increase it to more than 95%. |
+| Claude, Anthropic | 18/05/2026 | Create the UI for the project. |
 
 
 All code was reviewed, understood, and tested by ours. AI tools were used only for acceptable purposes as defined by the course policy (exploring topics, brainstorming, debugging, code refactoring, and proofreading).
